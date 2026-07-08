@@ -219,13 +219,21 @@ let audioMain = null;
 let audioCeleb = null;
 
 function initAudio() {
+  /* Solo se crea el audio principal aquí. El de celebración se crea
+     de forma perezosa (ver ensureCelebAudio) para no competir por el
+     "gesto de usuario" justo en el momento crítico de desbloquear
+     el audio principal en móviles Android. */
   audioMain        = new Audio(SONG_MAIN);
   audioMain.loop   = true;
   audioMain.volume = 0.5;
+}
 
-  audioCeleb        = new Audio(SONG_CELEBRATION);
-  audioCeleb.loop   = true;
-  audioCeleb.volume = 0.5;
+function ensureCelebAudio() {
+  if (!audioCeleb) {
+    audioCeleb        = new Audio(SONG_CELEBRATION);
+    audioCeleb.loop   = true;
+    audioCeleb.volume = 0.5;
+  }
 }
 
 let musicStarted = false;
@@ -235,10 +243,9 @@ function switchToCelebrationMusic() {
     audioMain.pause();
     audioMain.currentTime = 0;
   }
-  if (audioCeleb) {
-    audioCeleb.currentTime = 0;
-    audioCeleb.play().catch(() => {});
-  }
+  ensureCelebAudio();
+  audioCeleb.currentTime = 0;
+  audioCeleb.play().catch((err) => console.warn('No se pudo reproducir la música de celebración:', err));
 }
 
 /* ════════════════════════════════════════
@@ -316,7 +323,13 @@ function openSurprise() {
      para desbloquear audio en iOS Safari, Android Chrome y todos
      los navegadores móviles modernos.                           */
   initAudio();
-  audioMain.play().catch(() => {});   /* arranca la canción principal */
+  const playPromise = audioMain.play();
+  if (playPromise && playPromise.catch) {
+    playPromise.catch((err) => {
+      console.warn('No se pudo reproducir el audio automáticamente:', err);
+      showRetryAudioButton();
+    });
+  }
   musicStarted = true;
 
   /* Oculta la pantalla de intro con fade */
@@ -333,6 +346,27 @@ function openSurprise() {
       ), i * 120);
     }
   }, 100);
+}
+
+/* ── Botón de reintento si el navegador bloqueó el audio ── */
+function showRetryAudioButton() {
+  if (document.getElementById('retry-audio-btn')) return; /* ya existe */
+  const btn = document.createElement('button');
+  btn.id = 'retry-audio-btn';
+  btn.textContent = '🔊 Toca para activar la música';
+  btn.style.cssText = `
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 9999; padding: 0.8rem 1.6rem; border-radius: 50px;
+    border: 2px solid #c084fc; background: #1a0f3a; color: #fff;
+    font-family: 'Cinzel Decorative', cursive; font-size: 0.85rem;
+    cursor: pointer; box-shadow: 0 0 20px #c084fc77;
+  `;
+  btn.addEventListener('click', () => {
+    audioMain.play().then(() => btn.remove()).catch((err) => {
+      console.warn('Reintento fallido:', err);
+    });
+  });
+  document.body.appendChild(btn);
 }
 
 /* ════════════════════════════════════════
