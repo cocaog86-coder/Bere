@@ -1,0 +1,13 @@
+✦ Carpeta de fotos ✦
+════════════════════════════════════════
+
+Coloca aquí todas tus fotos (JPG, PNG, WEBP, etc.)
+La página las cargará automáticamente al abrirla.
+
+Nombres sugeridos para que salgan en orden:
+  foto01.jpg
+  foto02.jpg
+  foto03.jpg
+  ... y así sucesivamente.
+
+════════════════════════════════════════

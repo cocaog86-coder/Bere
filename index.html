@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💜 ¿Quieres ser mía?</title>
+  <link rel="stylesheet" href="estilos.css" />
+</head>
+<body>
+
+<div class="scene">
+
+  <canvas id="stars"></canvas>
+
+  <!-- Castillo de fondo -->
+  <svg class="castle" width="500" height="360" viewBox="0 0 440 320" fill="none" aria-hidden="true">
+    <rect x="160" y="200" width="120" height="120" fill="white"/>
+    <rect x="140" y="220" width="40"  height="100" fill="white"/>
+    <rect x="260" y="220" width="40"  height="100" fill="white"/>
+    <rect x="190" y="250" width="60"  height="70"  fill="#0a0520"/>
+    <polygon points="220,140 160,200 280,200" fill="white"/>
+    <polygon points="160,190 140,220 180,220" fill="white"/>
+    <polygon points="280,190 260,220 300,220" fill="white"/>
+    <rect x="130" y="210" width="10" height="15" fill="white"/>
+    <rect x="150" y="210" width="10" height="15" fill="white"/>
+    <rect x="280" y="210" width="10" height="15" fill="white"/>
+    <rect x="300" y="210" width="10" height="15" fill="white"/>
+    <line x1="220" y1="100" x2="220" y2="145" stroke="white" stroke-width="1.5"/>
+    <polygon points="220,85 213,105 227,105" fill="white"/>
+    <rect x="60"  y="240" width="70" height="80" fill="white" opacity="0.7"/>
+    <rect x="310" y="240" width="70" height="80" fill="white" opacity="0.7"/>
+    <polygon points="95,210 60,240 130,240"   fill="white" opacity="0.7"/>
+    <polygon points="345,210 310,240 380,240" fill="white" opacity="0.7"/>
+  </svg>
+
+  <!-- ══ CONTENIDO PRINCIPAL ══ -->
+  <div class="content" id="main-content">
+
+    <span class="crown">👑</span>
+    <p class="subtitle-top">Una historia de amor</p>
+    <h1>Mi Princesa,<br>¿Quieres ser mía?</h1>
+    <div class="sparkle-row">✨ 🌟 💜 🌟 ✨</div>
+
+    <!-- ══ GALERÍA CINEMATOGRÁFICA ══ -->
+    <div class="gallery-section">
+      <p class="gallery-label">✦ Nuestros momentos mágicos ✦</p>
+
+      <div class="cine-track-wrap">
+        <button class="cine-btn cine-btn-prev" onclick="prevSlide()" aria-label="Anterior">&#8249;</button>
+        <div class="cine-track" id="cine-track"></div>
+        <button class="cine-btn cine-btn-next" onclick="nextSlide()" aria-label="Siguiente">&#8250;</button>
+      </div>
+
+      <div class="cine-dots" id="cine-dots"></div>
+      <p class="cine-counter" id="cine-counter"></p>
+    </div>
+
+    <!-- Carta -->
+    <div class="card">
+      <p>
+        Desde el momento en que apareciste en mi vida,<br>
+        el mundo se llenó de colores que antes no existían.<br><br>
+        Como en cada cuento mágico, supe que tú eras<br>
+        la persona con quien quiero vivir esta historia.<br><br>
+        No soy un príncipe perfecto, pero contigo<br>
+        prometo ser el mejor capítulo de tu cuento.
+      </p>
+    </div>
+
+    <p class="question">¿Quieres ser mi pareja? 💜</p>
+
+    <div class="buttons">
+      <button class="btn-yes" onclick="sayYes()">✨ ¡Sí, acepto! ✨</button>
+      <button class="btn-no" id="btn-no" onmouseover="escapeBtn()" onclick="escapeBtn()">Mmm... no sé</button>
+    </div>
+
+  </div>
+
+  <!-- ══ CELEBRACIÓN ══ -->
+  <div class="celebration" id="celebration">
+    <div class="heart-burst">💜</div>
+    <h2>¡Sí dijiste que sí! 🎉</h2>
+    <p>
+      Este es el comienzo de nuestra historia mágica.<br>
+      Juntos escribiremos el cuento más hermoso<br>
+      que el mundo haya visto. ✨
+    </p>
+    <div class="sparkle-row" style="font-size:1.5rem;">🌟 💜 🌟 💜 🌟</div>
+  </div>
+
+  <p class="footer-text">— Hecho con magia y mucho amor —</p>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

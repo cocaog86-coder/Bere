@@ -1,0 +1,394 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Lato:wght@300;400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Escena ── */
+.scene {
+  min-height: 100vh;
+  background: #0a0520;
+  position: relative;
+  overflow-x: hidden;
+  font-family: 'Lato', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1rem 3rem;
+}
+
+canvas#stars {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.castle {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.13;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Contenido ── */
+.content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 680px;
+  width: 100%;
+}
+
+.crown {
+  font-size: 2.4rem;
+  margin-bottom: 0.5rem;
+  animation: float 3s ease-in-out infinite;
+  display: block;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+.subtitle-top {
+  font-weight: 300;
+  font-size: 0.8rem;
+  letter-spacing: 0.38em;
+  color: #d4a8ff;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-family: 'Cinzel Decorative', cursive;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 4.5vw, 2.4rem);
+  color: #fff8e1;
+  line-height: 1.35;
+  text-shadow: 0 0 40px #c084fc88, 0 0 80px #7c3aed44;
+  margin-bottom: 0.5rem;
+}
+
+.sparkle-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.7rem 0 1.6rem;
+  font-size: 1rem;
+}
+
+/* ══════════════════════════════════════
+   CARRUSEL CINEMATOGRÁFICO
+══════════════════════════════════════ */
+.gallery-section {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.gallery-label {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 0.72rem;
+  color: #d4a8ff;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+}
+
+/* Pista del carrusel */
+.cine-track-wrap {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  overflow: hidden;
+}
+
+/* Botones de navegación */
+.cine-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(192,132,252,0.45);
+  background: rgba(10,5,32,0.75);
+  color: #d4a8ff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  backdrop-filter: blur(4px);
+}
+.cine-btn:hover {
+  background: rgba(124,58,237,0.55);
+  border-color: #c084fc;
+  transform: translateY(-50%) scale(1.1);
+}
+.cine-btn-prev { left: 4px; }
+.cine-btn-next { right: 4px; }
+
+/* Contenedor de tarjetas */
+.cine-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Cada tarjeta */
+.cine-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220px;
+  height: 260px;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.55s cubic-bezier(0.4,0,0.2,1),
+    opacity   0.55s cubic-bezier(0.4,0,0.2,1),
+    filter    0.55s cubic-bezier(0.4,0,0.2,1),
+    z-index   0s   linear 0.275s;
+  transform-origin: center center;
+  border: 2px solid rgba(192,132,252,0.0);
+}
+
+/* Estados posicionales */
+/* Centro (activa) */
+.cine-card[data-pos="0"] {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  filter: brightness(1) blur(0px);
+  z-index: 5;
+  border-color: rgba(192,132,252,0.6);
+  box-shadow: 0 0 40px #7c3aed55, 0 8px 32px #00000066;
+  transition:
+    transform 0.55s cubic-bezier(0.4,0,0.2,1),
+    opacity   0.55s cubic-bezier(0.4,0,0.2,1),
+    filter    0.55s cubic-bezier(0.4,0,0.2,1),
+    z-index   0s linear 0s;
+}
+/* Inmediata derecha */
+.cine-card[data-pos="1"] {
+  transform: translate(calc(-50% + 170px), -50%) scale(0.78);
+  opacity: 0.42;
+  filter: brightness(0.6) blur(1.5px);
+  z-index: 4;
+}
+/* Inmediata izquierda */
+.cine-card[data-pos="-1"] {
+  transform: translate(calc(-50% - 170px), -50%) scale(0.78);
+  opacity: 0.42;
+  filter: brightness(0.6) blur(1.5px);
+  z-index: 4;
+}
+/* Segunda derecha */
+.cine-card[data-pos="2"] {
+  transform: translate(calc(-50% + 295px), -50%) scale(0.6);
+  opacity: 0.18;
+  filter: brightness(0.4) blur(3px);
+  z-index: 3;
+}
+/* Segunda izquierda */
+.cine-card[data-pos="-2"] {
+  transform: translate(calc(-50% - 295px), -50%) scale(0.6);
+  opacity: 0.18;
+  filter: brightness(0.4) blur(3px);
+  z-index: 3;
+}
+/* Ocultas (más lejos) */
+.cine-card[data-pos="3"],
+.cine-card[data-pos="-3"],
+.cine-card[data-hidden="true"] {
+  transform: translate(calc(-50% + 380px), -50%) scale(0.5);
+  opacity: 0;
+  filter: brightness(0.2) blur(6px);
+  z-index: 1;
+  pointer-events: none;
+}
+.cine-card[data-pos="-3"] {
+  transform: translate(calc(-50% - 380px), -50%) scale(0.5);
+}
+
+/* Imagen dentro de la tarjeta */
+.cine-card img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Caption en la activa */
+.cine-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(10,5,32,0.9));
+  padding: 1.2rem 0.8rem 0.7rem;
+  font-size: 0.78rem;
+  color: #e2d9f3;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.cine-card[data-pos="0"] .cine-caption { opacity: 1; }
+
+/* Placeholder vacío */
+.cine-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0.5rem;
+  background: #120830;
+}
+.cine-placeholder .ph-icon {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 2px dashed rgba(192,132,252,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+}
+.cine-placeholder .ph-text {
+  font-size: 0.72rem;
+  color: #7a5fa0;
+  letter-spacing: 0.04em;
+}
+
+/* Indicadores / dots */
+.cine-dots {
+  display: flex; justify-content: center;
+  gap: 5px; margin-top: 1rem;
+  flex-wrap: wrap;
+  padding: 0 2rem;
+}
+.cine-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(192,132,252,0.28);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+.cine-dot.active {
+  background: #c084fc;
+  transform: scale(1.5);
+}
+
+/* Contador */
+.cine-counter {
+  font-size: 0.72rem;
+  color: #7a5fa0;
+  margin-top: 0.6rem;
+  letter-spacing: 0.1em;
+}
+
+
+/* ── Carta ── */
+.card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 20px;
+  padding: 1.6rem 1.8rem;
+  backdrop-filter: blur(8px);
+  margin-bottom: 1.8rem;
+}
+.card p {
+  font-size: 0.95rem;
+  color: #e2d9f3;
+  line-height: 1.95;
+  font-weight: 300;
+}
+
+/* ── Pregunta y botones ── */
+.question {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(1rem, 3.2vw, 1.4rem);
+  color: #fff8e1;
+  margin-bottom: 1.6rem;
+  text-shadow: 0 0 20px #c084fc66;
+}
+
+.buttons { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; }
+
+.btn-yes {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 0.95rem;
+  padding: 0.9rem 2.2rem;
+  border-radius: 50px;
+  border: 2px solid #c084fc;
+  background: linear-gradient(135deg, #7c3aed, #c026d3);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 24px #c084fc55;
+}
+.btn-yes:hover { transform: scale(1.07); box-shadow: 0 0 40px #c084fc99; }
+
+.btn-no {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 0.85rem;
+  padding: 0.9rem 2rem;
+  border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: #b8a9cc;
+  cursor: pointer;
+  position: relative;
+}
+
+/* ── Celebración ── */
+.celebration {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 480px;
+}
+.celebration.show { display: flex; }
+.celebration h2 {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+  color: #f9c4ff;
+  text-shadow: 0 0 30px #c084fc;
+}
+.celebration p { color: #e2d9f3; font-size: 0.95rem; font-weight: 300; line-height: 1.7; }
+
+.heart-burst {
+  font-size: 3rem;
+  animation: heartbeat 0.6s ease-in-out infinite alternate;
+}
+@keyframes heartbeat { from { transform: scale(1); } to { transform: scale(1.2); } }
+
+.footer-text {
+  margin-top: 2.5rem;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Responsive ── */
+@media (max-width: 500px) {
+  .cine-track-wrap { height: 240px; }
+  .cine-card { width: 170px; height: 210px; }
+  .cine-card[data-pos="1"]  { transform: translate(calc(-50% + 130px), -50%) scale(0.75); }
+  .cine-card[data-pos="-1"] { transform: translate(calc(-50% - 130px), -50%) scale(0.75); }
+  .cine-card[data-pos="2"]  { transform: translate(calc(-50% + 220px), -50%) scale(0.58); }
+  .cine-card[data-pos="-2"] { transform: translate(calc(-50% - 220px), -50%) scale(0.58); }
+  .cine-btn-prev { left: 0; }
+  .cine-btn-next { right: 0; }
+}
