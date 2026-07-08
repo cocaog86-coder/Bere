@@ -271,9 +271,16 @@ function sayYes() {
 /* ── Botón "no sé" ── */
 let noClicks = 0;
 
+let escapeLock = false;
+
 function escapeBtn(e) {
   /* Evita que el toque en móvil propague y dispare otro evento */
   if (e) { e.preventDefault(); e.stopPropagation(); }
+
+  /* Evita doble conteo si touchstart y mouseover/click disparan casi juntos */
+  if (escapeLock) return;
+  escapeLock = true;
+  setTimeout(() => { escapeLock = false; }, 300);
 
   noClicks++;
   const btn = document.getElementById('btn-no');
@@ -296,7 +303,15 @@ function escapeBtn(e) {
 /* ════════════════════════════════════════
    PANTALLA DE INTRO → desbloquea audio
 ════════════════════════════════════════ */
+let introOpened = false;
+
 function openSurprise() {
+  /* Guardián: evita que se ejecute dos veces (y se dupliquen los
+     objetos Audio) si el navegador dispara más de un evento
+     (por ejemplo touchstart + click sintético) por el mismo toque. */
+  if (introOpened) return;
+  introOpened = true;
+
   /* Este gesto directo (clic/touch sobre el botón) es suficiente
      para desbloquear audio en iOS Safari, Android Chrome y todos
      los navegadores móviles modernos.                           */
@@ -330,13 +345,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
 
-  /* Botón de intro — único punto de entrada para el audio */
+  /* Botón de intro — único punto de entrada para el audio.
+     Se usa solo 'click': en navegadores móviles modernos el toque
+     genera un evento click de forma fiable y evita que se disparen
+     dos veces (touchstart + click) creando audio duplicado. */
   const introBtn = document.getElementById('intro-btn');
-  introBtn.addEventListener('click',      openSurprise);
-  introBtn.addEventListener('touchstart', (e) => {
-    e.preventDefault();   /* evita el doble disparo click+touch en móvil */
-    openSurprise();
-  }, { passive: false });
+  introBtn.addEventListener('click', openSurprise);
 
   /* Destellos al tocar la escena (sin afectar audio) */
   document.querySelector('.scene').addEventListener('click', e => {
