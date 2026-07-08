@@ -9,16 +9,16 @@
    Ejemplo:  { src: "fotos/foto01.jpg", caption: "Nuestro primer día 💜" }
 ══════════════════════════════════════════════════════════ */
 const PHOTOS = [
-  { src: "fotos/foto01.jpg", caption: "El sueter💜" },
+  { src: "fotos/foto01.jpg", caption: "Nuestro primer momento juntos 💜" },
   { src: "fotos/foto02.jpg", caption: "Un día para recordar siempre ✨" },
   { src: "fotos/foto03.jpg", caption: "Contigo todo es más bonito 🌟" },
   { src: "fotos/foto04.jpg", caption: "Mi persona favorita en el mundo 👑" },
   { src: "fotos/foto05.jpg", caption: "Escribiendo nuestra historia 💫" },
   { src: "fotos/foto06.jpg", caption: "Cada sonrisa tuya es mi favorita 🌙" },
   { src: "fotos/foto07.jpg", caption: "Un recuerdo que guardo en el corazón 🌸" },
-  { src: "fotos/foto08.jpg", caption: "Me haces feliz todos los días 💫" },
+  { src: "fotos/foto08.jpg", caption: "Juntos somos la mejor historia 💎" },
   { src: "fotos/foto09.jpg", caption: "El momento en que supe que eras tú ✦" },
-  { src: "fotos/foto10.jpg", caption: "Te amo 💜" },
+  { src: "fotos/foto10.jpg", caption: "Nuestro final feliz apenas comienza 🏰" },
 ];
 /* ══════════════════════════════════════════════════════════ */
 
@@ -228,14 +228,7 @@ function initAudio() {
   audioCeleb.volume = 0.5;
 }
 
-/* Los navegadores bloquean el autoplay hasta que el usuario
-   interactúa con la página — arrancamos al primer toque/clic  */
 let musicStarted = false;
-function startMainMusic() {
-  if (musicStarted || !audioMain) return;
-  musicStarted = true;
-  audioMain.play().catch(() => {}); /* silencia el error si sigue bloqueado */
-}
 
 function switchToCelebrationMusic() {
   if (audioMain) {
@@ -301,24 +294,54 @@ function escapeBtn(e) {
 }
 
 /* ════════════════════════════════════════
+   PANTALLA DE INTRO → desbloquea audio
+════════════════════════════════════════ */
+function openSurprise() {
+  /* Este gesto directo (clic/touch sobre el botón) es suficiente
+     para desbloquear audio en iOS Safari, Android Chrome y todos
+     los navegadores móviles modernos.                           */
+  initAudio();
+  audioMain.play().catch(() => {});   /* arranca la canción principal */
+  musicStarted = true;
+
+  /* Oculta la pantalla de intro con fade */
+  const intro = document.getElementById('intro-screen');
+  intro.classList.add('hidden');
+
+  /* Destellos de bienvenida */
+  setTimeout(() => {
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => burst(
+        80 + Math.random() * (window.innerWidth - 160),
+        60 + Math.random() * 200,
+        18
+      ), i * 120);
+    }
+  }, 100);
+}
+
+/* ════════════════════════════════════════
    INICIO
 ════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   resizeCanvas();
   initStars();
   animLoop();
-  initAudio();
 
   window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
 
-  /* Destellos al hacer clic + arrancar música en el primer gesto */
+  /* Botón de intro — único punto de entrada para el audio */
+  const introBtn = document.getElementById('intro-btn');
+  introBtn.addEventListener('click',      openSurprise);
+  introBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();   /* evita el doble disparo click+touch en móvil */
+    openSurprise();
+  }, { passive: false });
+
+  /* Destellos al tocar la escena (sin afectar audio) */
   document.querySelector('.scene').addEventListener('click', e => {
-    startMainMusic();
     burst(e.clientX, e.clientY, 10);
   });
-  document.querySelector('.scene').addEventListener('touchstart', () => {
-    startMainMusic();
-  }, { passive: true });
 
   /* Botón "no sé" — separar hover (desktop) de touch (móvil) */
   const btnNo = document.getElementById('btn-no');
