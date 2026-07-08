@@ -9,16 +9,16 @@
    Ejemplo:  { src: "fotos/foto01.jpg", caption: "Nuestro primer día 💜" }
 ══════════════════════════════════════════════════════════ */
 const PHOTOS = [
-  { src: "fotos/foto01.jpg", caption: "Nuestro primer momento juntos 💜" },
+  { src: "fotos/foto01.jpg", caption: "El sueter💜" },
   { src: "fotos/foto02.jpg", caption: "Un día para recordar siempre ✨" },
   { src: "fotos/foto03.jpg", caption: "Contigo todo es más bonito 🌟" },
   { src: "fotos/foto04.jpg", caption: "Mi persona favorita en el mundo 👑" },
   { src: "fotos/foto05.jpg", caption: "Escribiendo nuestra historia 💫" },
   { src: "fotos/foto06.jpg", caption: "Cada sonrisa tuya es mi favorita 🌙" },
   { src: "fotos/foto07.jpg", caption: "Un recuerdo que guardo en el corazón 🌸" },
-  { src: "fotos/foto08.jpg", caption: "Juntos somos la mejor historia 💎" },
+  { src: "fotos/foto08.jpg", caption: "Me haces feliz todos los días 💫" },
   { src: "fotos/foto09.jpg", caption: "El momento en que supe que eras tú ✦" },
-  { src: "fotos/foto10.jpg", caption: "Nuestro final feliz apenas comienza 🏰" },
+  { src: "fotos/foto10.jpg", caption: "Te amo 💜" },
 ];
 /* ══════════════════════════════════════════════════════════ */
 
@@ -207,9 +207,53 @@ document.addEventListener('keydown', e => {
 });
 
 /* ════════════════════════════════════════
+   MÚSICA
+════════════════════════════════════════ */
+
+/* ── Cambia aquí los nombres de tus archivos MP3 ──
+   Ponlos en la misma carpeta que index.html       */
+const SONG_MAIN        = 'cancion_principal.mp3';   // suena en la página principal
+const SONG_CELEBRATION = 'cancion_si.mp3';          // suena al aceptar
+
+let audioMain = null;
+let audioCeleb = null;
+
+function initAudio() {
+  audioMain        = new Audio(SONG_MAIN);
+  audioMain.loop   = true;
+  audioMain.volume = 0.5;
+
+  audioCeleb        = new Audio(SONG_CELEBRATION);
+  audioCeleb.loop   = true;
+  audioCeleb.volume = 0.5;
+}
+
+/* Los navegadores bloquean el autoplay hasta que el usuario
+   interactúa con la página — arrancamos al primer toque/clic  */
+let musicStarted = false;
+function startMainMusic() {
+  if (musicStarted || !audioMain) return;
+  musicStarted = true;
+  audioMain.play().catch(() => {}); /* silencia el error si sigue bloqueado */
+}
+
+function switchToCelebrationMusic() {
+  if (audioMain) {
+    audioMain.pause();
+    audioMain.currentTime = 0;
+  }
+  if (audioCeleb) {
+    audioCeleb.currentTime = 0;
+    audioCeleb.play().catch(() => {});
+  }
+}
+
+/* ════════════════════════════════════════
    BOTONES DE RESPUESTA
 ════════════════════════════════════════ */
 function sayYes() {
+  switchToCelebrationMusic();
+
   for (let i = 0; i < 3; i++) {
     setTimeout(() => burst(
       80 + Math.random() * (window.innerWidth - 160),
@@ -231,17 +275,29 @@ function sayYes() {
   }, 300);
 }
 
+/* ── Botón "no sé" ── */
 let noClicks = 0;
-function escapeBtn() {
+
+function escapeBtn(e) {
+  /* Evita que el toque en móvil propague y dispare otro evento */
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+
   noClicks++;
   const btn = document.getElementById('btn-no');
-  const nx  = Math.random() * (window.innerWidth  - btn.offsetWidth  - 20) + 10;
-  const ny  = Math.random() * (window.innerHeight - btn.offsetHeight - 20) + 10;
+
+  /* Margen seguro para que no salga fuera de pantalla */
+  const margin = 16;
+  const maxX   = window.innerWidth  - btn.offsetWidth  - margin;
+  const maxY   = window.innerHeight - btn.offsetHeight - margin;
+  const nx     = margin + Math.random() * maxX;
+  const ny     = margin + Math.random() * maxY;
+
   btn.style.position = 'fixed';
   btn.style.left     = nx + 'px';
   btn.style.top      = ny + 'px';
   btn.style.zIndex   = '999';
-  if (noClicks >= 3) btn.style.display = 'none';
+
+  if (noClicks >= 4) btn.style.display = 'none';
 }
 
 /* ════════════════════════════════════════
@@ -251,9 +307,23 @@ document.addEventListener('DOMContentLoaded', () => {
   resizeCanvas();
   initStars();
   animLoop();
+  initAudio();
+
   window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
 
-  document.querySelector('.scene').addEventListener('click', e => burst(e.clientX, e.clientY, 10));
+  /* Destellos al hacer clic + arrancar música en el primer gesto */
+  document.querySelector('.scene').addEventListener('click', e => {
+    startMainMusic();
+    burst(e.clientX, e.clientY, 10);
+  });
+  document.querySelector('.scene').addEventListener('touchstart', () => {
+    startMainMusic();
+  }, { passive: true });
+
+  /* Botón "no sé" — separar hover (desktop) de touch (móvil) */
+  const btnNo = document.getElementById('btn-no');
+  btnNo.addEventListener('touchstart', escapeBtn, { passive: false });
+  btnNo.addEventListener('mouseover',  escapeBtn);
 
   renderCards();
   startAutoPlay();
